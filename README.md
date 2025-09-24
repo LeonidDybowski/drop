@@ -1,13 +1,13 @@
 # DROP
 
-Finding the disease-causing variant for a patient based on the whole exome or whole genome sequencing is usually possible in less than 50% of cases. Incorporation of the RNA sequencing can improve the diagnostic yield by 8-36%. 
+Finding the disease-causing variant for a patient based on whole exome or whole genome sequencing is usually possible in less than 50% of cases. Incorporating RNA sequencing can improve this percentage by 8-36%. 
 
-The standard analysis of differential gene expression is usually unsuitable for the diagnostics of rare diseases, because there is only one replica for each sample. It is still possible to perform a DESeq2 analysis for each of the affected individuals against a list of the unaffected ones and then do a Gene Set Enrichment Analysis to find the potentially dysregulated pathway. However, there are several other tools that are more tailored for the diagnostics of rare diseases by using statistical methods for fidning outliers.
+The standard analysis of differential gene expression is usually not preferred for the diagnostics of rare diseases, because there is only one replica for each sample. It is still possible to perform a DESeq2 analysis for each of the affected individuals against a list of the unaffected ones and then do a Gene Set Enrichment Analysis to find the potentially dysregulated pathway. However, there are several other tools that are more tailored for the diagnostics of rare diseases by using statistical methods for fidning outliers.
 
 The DROP pipeline incorporates three of them:
 1. OUTRIDER (Outlier in RNA-Seq Finder) that searchs for the events of aberrant expression. It is based on denoising autoencoders and negative binomial distribution.
-2. FRASER (Find RAre Splicing Events in RNA-seq) is used to screen the transcripts for the abnormal splicing. It calculates the fraction of reads for each splicing site, also employs autoencoders and beta-binomial distribution.
-3. MAE (Mono-allelic expression) employs negative binomial test to identify the heterozygous variants that are expressed from only one allele.
+2. FRASER (Find RAre Splicing Events in RNA-seq) is used to screen the transcripts for the abnormal splicing. It calculates the fraction of reads for each splicing site, employs autoencoders and looks for the outliers from beta-binomial distribution.
+3. MAE (Mono-allelic expression) applies a negative binomial test to identify the heterozygous variants that are expressed from only one allele.
 
 The combination of these tools was shown to increas the diagnostic yield by 16%. In this work, this pipeline was applied to a cohort of 75 patients (55 affected) to estimate the number of candidate findings. This project was part of the thesis practical phase at the Hochschule Bonn-Rhein-Sieg.
 
@@ -17,9 +17,9 @@ This was done in 2 steps:
 
 Both steps were performed on the H-BRS Platform for Scientific Computing using SLURM and Apptainer. Additionally to that, the counts tables were analyzed with pyDESeq2 and GSEApy for the comparison of methods.
 
-The nextflow pipiline was run in a local mode using Ensembl 113 reference genome, as well as STAR as a read aligner and SALMON for quantification of reads. The DROP pipeline was run also with the same reference genome. The MAE module was used for 24 out of 75 patients for whom whole genome sequencing data was available.The pyDESeq2 analysis was done according to the pyDESeq2 example [guide](https://github.com/mousepixels/sanbomics_scripts/blob/main/PyDeseq2_DE_tutorial.ipynb).
+The nextflow pipiline was run in a local mode using Ensembl 113 reference genome, as well as STAR as a read aligner and SALMON for quantification of reads. The DROP pipeline was run also with the same reference genome. The MAE module was used for 24 out of 75 patients for whom whole genome sequencing data was available. The pyDESeq2 analysis was done according to the pyDESeq2 example [guide](https://github.com/mousepixels/sanbomics_scripts/blob/main/PyDeseq2_DE_tutorial.ipynb).
 
-To match the findings to the potential explanantion of the phenotype, a list of genes associated with autoinflammmatory diseases was composed from the Infevers databasse and a review paper from 2024. There were 76 genes variants in which were shown to cause autoinflammation. 
+To match the findings to the potential explanantion of the phenotype, a list of genes associated with autoinflammmatory diseases was composed from the Infevers databasse and a review paper from 2024. There were 76 genes, variants in which were shown to cause autoinflammation. 
 
 ## Statistics
 
@@ -47,7 +47,7 @@ The median number of differentially expressed genes (DEGs) was 115. In most case
 
 ## Conclusion
 
-The interpretation of the dysregulated pathways was the most difficult part of the DESeq2 analysis. So far none of these findings helped to understand the disease cause. On the contrary, the DROP pipeline provided a few hypotheses for the reason behind the disorder. The literature states that the DROP pipeline helps to improvve the diagnostic yield by 16%. In terms of this project, this many explanations could not have been found. There were around 4 hints for the disease cause. But this was estinated only by taking into account the 76 known genes, and there is more findings to explore.
+The interpretation of the dysregulated pathways was the most difficult part of the DESeq2 analysis. So far none of these findings helped to understand the disease cause. On the contrary, the DROP pipeline provided a few hypotheses for the reason behind the disorder. The literature states that the DROP pipeline helps to improvve the diagnostic yield by 16%. In terms of this project, this many explanations could not have been found. There were around 4 hints for the disease cause. But this was estimated only by taking into account the 76 known genes, and there is more findings to explore.
 
 ## References
 
