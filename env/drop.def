@@ -1,0 +1,27 @@
+Bootstrap: docker
+From: continuumio/miniconda3:latest
+
+%post
+    apt-get update && apt-get install -y git wget bzip2 && apt-get clean
+
+    # Create environment from official DROP yaml
+    conda env create -f /drop_env.yaml
+
+    # Activate env on container start
+    echo "source activate DROP_1.4.0" >> /environment
+
+    # Clean up
+    conda clean -afy
+
+%files
+    drop_env.yaml /drop_env.yaml
+
+%environment
+    export PATH="/opt/conda/envs/drop_env/bin:$PATH"
+    export LC_ALL=C
+    export LANG=C
+    export R_LIBS_USER="/opt/conda/envs/drop_env/lib/R/library"
+
+%runscript
+    exec /bin/bash "$@"
+

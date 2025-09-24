@@ -1,0 +1,57 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
+    apt-get update && apt-get install -y tzdata
+    dpkg-reconfigure -f noninteractive tzdata
+
+    apt-get update && apt-get install -y \
+        wget curl git bzip2 unzip make gcc g++ \
+        build-essential zlib1g-dev libbz2-dev liblzma-dev libcurl4-openssl-dev libssl-dev \
+        python3 python3-pip python3-dev python-is-python3 \
+        r-base r-base-dev \
+        samtools fastqc cutadapt \
+        default-jdk \
+        vim-common
+
+    cd /opt
+    wget https://github.com/FelixKrueger/TrimGalore/archive/0.6.10.tar.gz
+    tar -xvzf 0.6.10.tar.gz
+    ln -s /opt/TrimGalore-0.6.10/trim_galore /usr/local/bin/trim_galore
+    chmod +x /usr/local/bin/trim_galore
+
+    cd /opt
+    wget https://github.com/alexdobin/STAR/archive/2.7.11a.tar.gz
+    tar -xvzf 2.7.11a.tar.gz
+    cd STAR-2.7.11a/source
+    make STAR
+    ln -s /opt/STAR-2.7.11a/bin/Linux_x86_64_static/STAR /usr/local/bin/STAR
+
+    cd /opt
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda
+    export PATH=/opt/miniconda/bin:$PATH
+
+    /opt/miniconda/bin/conda install -n base -c conda-forge mamba
+    /opt/miniconda/bin/mamba create -y -n rnaseq_env -c bioconda -c conda-forge salmon=1.10.2
+
+    pip install multiqc
+
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+%environment
+    export LC_ALL=C
+    export LANG=C
+    export PATH="/usr/local/bin:/opt/miniconda/bin:$PATH"
+    source activate rnaseq_env
+
+%labels
+    Version nfcore_rnaseq_final
+    Description "nf-core/rnaseq container with STAR, Salmon, Samtools, FastQC, Cutadapt, TrimGalore, R, Python, Java."
+
+%help
+    Container includes STAR, Salmon, Samtools, FastQC, Cutadapt, TrimGalore, R, Python, Java. Ready for nf-core/rnaseq.
+
